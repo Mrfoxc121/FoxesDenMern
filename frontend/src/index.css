@@ -1,1 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap');
+body {
+    font-family: 'Merriweather', serif;
+    background: #f8fafc;
+}
 
+main {
+    min-height: 80vh;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+h1 {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 2.4rem;
+    padding: 1rem 0;
+}
+
+h2 {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 1.4rem;
+    padding: 0.5rem 0;
+}
+
+h3 {
+    padding: 1rem 0;
+}
+
+.rating span {
+    margin: 0.1rem;
+}
+
+.bg-custom {
+    background: #000;
+}
+
+.btn-custom {
+    margin-top: 20px;
+    padding: 10px 70px;
+    background: #000;
+    color: #fff;
+}
+
+.btn-custom:hover {
+    color: #999;
+}
