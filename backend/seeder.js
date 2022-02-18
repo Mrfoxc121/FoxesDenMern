@@ -1,56 +1,38 @@
-import mongoose from 'mongoose';
+import express from'express';
 import dotenv from 'dotenv';
 import colors from 'colors';
-import users from './data/users.js';
-import products from './data/products.js';
-import User from './models/userModel.js';
-import Order from './models/orderModel.js';
-import Product from './models/productModel.js';
-import connectDB from './config/db.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import connectDB from './config/db.js'
+
+import productRoutes from './routes/productRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 
 dotenv.config();
+connectDB()
+const app = express();
 
-connectDB();
+app.use(express.json())
+
+app.get('/', (req, res) => {
+    res.send('API is running.....');
+});
+
+app.use('/api/products', productRoutes)
+app.use('/api/users', userRoutes)
 
 
-const importData = async () => {
-    try {
-        await Order.deleteMany();
-        await Product.deleteMany();
-        await User.deleteMany();
+app.get('/api/products', (req, res) => {
+    res.json(products);
+});
+app.get('/api/products/:id', (req, res) => {
+    const product = product.find(p => p._id === req.params.id)
+    res.json(product);
+});
 
-        const createdUsers = await User.insertMany(users);
+app.use(notFound);
 
-        const adminUser = createdUsers[0]._id;
+app.use(errorHandler);
 
-        const sampleProducts = products.map(product => {
-            return{ ...product, user: adminUser }
-        });
+const PORT = process.env.PORT || 5500; 
 
-        await Product.insertMany(sampleProducts); 
-        console.log('Data Imported!'.green.inverse);
-        process.exit();
-    } catch (error) {
-        console.error(`${error}`.red.inverse)
-        process.exit(1);
-    }
-}
-const destroyData = async () => {
-    try {
-        await Order.deleteMany();
-        await Product.deleteMany();
-        await User.deleteMany();
- 
-        console.log('Data Destroyed!'.red.inverse)
-        process.exit();
-    } catch (error) {
-        console.error(`${error}`.red.inverse);
-        process.exit(1);
-    }
-}
-
-if(process.argv[2] === '-d') {
-    destroyData();
-} else {
-importData();
-}
+app.listen(PORT, console.log(`Server running In ${process.env.NODE_ENV} mode on port ${PORT}`.cyan.underline));
