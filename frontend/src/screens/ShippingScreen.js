@@ -12,14 +12,13 @@ const ShippingScreen = ({ history }) => {
   const [address, setAddress] = useState(shippingAddress.address)
   const [city, setCity] = useState(shippingAddress.city)
   const [postcode, setPostcode] = useState(shippingAddress.postcode)
-  const [county, setCounty] = useState(shippingAddress.county)
   const [country, setCountry] = useState(shippingAddress.country)
 
   const dispatch = useDispatch()
 
   const submitHandler = (e) => {
       e.preventDefault()
-      dispatch(saveShippingAdress({ address, city, county,  postcode, country }))
+      dispatch(saveShippingAdress({ address, city,  postcode, country }))
       history.push('/payment')
   }
   
@@ -38,10 +37,6 @@ const ShippingScreen = ({ history }) => {
         <Form.Group controlId='postCode'>
                 <Form.Label className="py-2">Postcode</Form.Label>
                 <Form.Control type='text' placeholder='Enter address' value={postcode} required onChange={(e) => setPostcode(e.target.value)}></Form.Control>
-        </Form.Group>
-        <Form.Group controlId='county'>
-                <Form.Label className="py-2">County</Form.Label>
-                <Form.Control type='text' placeholder='Enter county' value={county} required onChange={(e) => setCounty(e.target.value)}></Form.Control>
         </Form.Group>
         <Form.Group controlId='country'>
                 <Form.Label className="py-2">Country</Form.Label>

@@ -33,9 +33,10 @@ const CartScreen = ({ match, location, history }) => {
     return <Row>
         <Col md={8}>
             <h1>Shopping Cart</h1>
-            {cartItems.length === 0 ? <Message variant={'danger'}>Your cart is empty <Link to='/'>Go Back</Link></Message> : ( <ListGroup variant='flush'>
-                {cartItems.map(item => (
-                    <ListGroupItem key={item.productId}>
+            {cartItems.length === 0 ? (
+                <Message variant={'danger'}>Your cart is empty <Link to='/'>Go Back</Link></Message> ) : ( <ListGroup variant='flush'>
+                {cartItems.map((item) => (
+                    <ListGroupItem key={item.product}>
                         <Row>
                             <Col md={2}>
                                 <Image src={item.image} alt={item.name} fluid rounded />
@@ -48,7 +49,7 @@ const CartScreen = ({ match, location, history }) => {
                             <Form.Control as='select' value={item.qty} onChange={(e) => 
                                             dispatch(addToCart(item.product, Number(e.target.value) ))}>
                                                 {
-                                                    [...Array(item.countInStock).keys()].map(x => (
+                                                    [...Array(item.countInStock).keys()].map((x) => (
                                                     <option key={x + 1} value={x + 1}>
                                                         {x + 1}
                                                     </option>
@@ -74,7 +75,7 @@ const CartScreen = ({ match, location, history }) => {
                         ${cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}
                     </ListGroup.Item>
                     <ListGroup.Item className='d-grid gap-2'>
-                        <Button type='button' className='btn-dark' size="md" disabled={cartItems.length === 0} onClick={checkoutHandler}>Proceed to checkout</Button>
+                        <Button type='button' className='btn-block' size="md" disabled={cartItems.length === 0} onClick={checkoutHandler}>Proceed to checkout</Button>
                     </ListGroup.Item>
                 </ListGroup>
             </Card>

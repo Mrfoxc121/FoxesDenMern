@@ -6,7 +6,7 @@ import Message from "../components/Message";
 import CheckoutSteps from '../components/CheckoutSteps'
 import { createOrder } from "../actions/orderActions";
 
-const PlaceOrderScreen = (history) => {
+const PlaceOrderScreen = ({ history }) => {
 const dispatch = useDispatch()
 
   const cart = useSelector(state => state.cart)
@@ -32,25 +32,24 @@ const { order, success, error } = orderCreate
 
 useEffect(() => {
     if(success) {
-       history.push(`/order/${order._id}`)
+        history.push(`/order/${order._id}`)
     } 
     // eslint-disable-next-line
     }, [history, success])
 
-  const placeOrderHandler = () => {
-      dispatch(createOrder({
-         orderItems: cart.cartItems,
-         shippingAddress: cart.shippingAddress,
-         paymentMethod: cart.paymentMethod,
-         itemsPrice: cart.itemsPrice,
-         taxPrice: cart.taxPrice,
-         totalPrice: cart.totalPrice,
-
-
-
-
-      }))
-  }
+    const placeOrderHandler = () => {
+        dispatch(
+          createOrder({
+            orderItems: cart.cartItems,
+            shippingAddress: cart.shippingAddress,
+            paymentMethod: cart.paymentMethod,
+            itemsPrice: cart.itemsPrice,
+            shippingPrice: cart.shippingPrice,
+            taxPrice: cart.taxPrice,
+            totalPrice: cart.totalPrice,
+          })
+        )
+      }
   
     return (
     <>
@@ -62,7 +61,7 @@ useEffect(() => {
                    <h2>Shipping</h2>
                    <p>
                        <strong>Address</strong>
-                       : {cart.shippingAddress.address}, {cart.shippingAddress.city}, {cart.shippingAddress.postcode}, {cart.shippingAddress.county}, {cart.shippingAddress.country}
+                       : {cart.shippingAddress.address}, {cart.shippingAddress.city}, {cart.shippingAddress.postcode}, {cart.shippingAddress.country}
                    </p>
                 </ListGroup.Item>
                 <ListGroup.Item> 
@@ -73,7 +72,7 @@ useEffect(() => {
                 <ListGroup.Item> 
                     <h2>Order Items</h2>
                     {cart.cartItems.length === 0 ? <Message>Your cart is empty</Message> : (
-                        <listGroup variant='flush'>
+                        <ListGroup variant='flush'>
                             {cart.cartItems.map((item, index) => (
                                 <ListGroup.Item key={index}>
                                     <Row>
@@ -91,7 +90,7 @@ useEffect(() => {
                                     </Row>
                                 </ListGroup.Item>
                             ) )}
-                        </listGroup>
+                        </ListGroup>
                     )}
                 </ListGroup.Item> 
             </ListGroup>
@@ -130,8 +129,15 @@ useEffect(() => {
                         {error && <Message variant='danger'>{error}</Message>}
                     </ListGroup.Item>
                     <ListGroup.Item>
-                        <Button type='button' className='btn-block' disabled={cart.cartItems === 0} onClick={placeOrderHandler} variant='custom' >Place Order</Button>
-                    </ListGroup.Item>
+                <Button
+                  type='button'
+                  className='btn-block'
+                  disabled={cart.cartItems === 0}
+                  onClick={placeOrderHandler}
+                >
+                  Place Order
+                </Button>
+              </ListGroup.Item>
                 </ListGroup>
             </Card>
         </Col>
