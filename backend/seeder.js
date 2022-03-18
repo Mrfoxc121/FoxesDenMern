@@ -1,38 +1,57 @@
-import express from'express';
-import dotenv from 'dotenv';
-import colors from 'colors';
-import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+import colors from 'colors'
+import users from './data/users.js'
+import products from './data/products.js'
+import User from './models/userModel.js'
+import Product from './models/productModel.js'
+import Order from './models/orderModel.js'
 import connectDB from './config/db.js'
 
-import productRoutes from './routes/productRoutes.js'
-import userRoutes from './routes/userRoutes.js'
+dotenv.config()
 
-dotenv.config();
 connectDB()
-const app = express();
 
-app.use(express.json())
+const importData = async () => {
+  try {
+    await Order.deleteMany()
+    await Product.deleteMany()
+    await User.deleteMany()
 
-app.get('/', (req, res) => {
-    res.send('API is running.....');
-});
+    const createdUsers = await User.insertMany(users)
 
-app.use('/api/products', productRoutes)
-app.use('/api/users', userRoutes)
+    const adminUser = createdUsers[0]._id
 
+    const sampleProducts = products.map((product) => {
+      return { ...product, user: adminUser }
+    })
 
-app.get('/api/products', (req, res) => {
-    res.json(products);
-});
-app.get('/api/products/:id', (req, res) => {
-    const product = product.find(p => p._id === req.params.id)
-    res.json(product);
-});
+    await Product.insertMany(sampleProducts)
 
-app.use(notFound);
+    console.log('Data Imported!'.green.inverse)
+    process.exit()
+  } catch (error) {
+    console.error(`${error}`.red.inverse)
+    process.exit(1)
+  }
+}
 
-app.use(errorHandler);
+const destroyData = async () => {
+  try {
+    await Order.deleteMany()
+    await Product.deleteMany()
+    await User.deleteMany()
 
-const PORT = process.env.PORT || 5500; 
+    console.log('Data Destroyed!'.red.inverse)
+    process.exit()
+  } catch (error) {
+    console.error(`${error}`.red.inverse)
+    process.exit(1)
+  }
+}
 
-app.listen(PORT, console.log(`Server running In ${process.env.NODE_ENV} mode on port ${PORT}`.cyan.underline));
+if (process.argv[2] === '-d') {
+  destroyData()
+} else {
+  importData()
+}
